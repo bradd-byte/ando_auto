@@ -10,23 +10,26 @@ import android.view.accessibility.AccessibilityEvent;
 public class AutoScrollAccessibilityService extends AccessibilityService {
 
     private Handler handler;
-    private long intervalMillis = 40000; // 默认 40 秒间隔
+    private long intervalMillis = 40000;
 
     @Override
-    public void onServiceConnected() {
+    protected void onServiceConnected() {
         super.onServiceConnected();
         handler = new Handler(Looper.getMainLooper());
         startAutoScroll();
     }
 
     @Override
-    public void onAccessibilityEvent(AccessibilityEvent event) {
-        // 暂不需要处理事件
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        long interval = intent.getLongExtra("scrollInterval", 40000);
+        updateInterval(interval);
+        return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override
-    public void onInterrupt() {
+    public void updateInterval(long millis) {
+        this.intervalMillis = millis;
         stopAutoScroll();
+        startAutoScroll();
     }
 
     private void startAutoScroll() {
@@ -49,16 +52,19 @@ public class AutoScrollAccessibilityService extends AccessibilityService {
 
     private void performScrollGesture() {
         Path path = new Path();
-        path.moveTo(500, 1500); // 起点坐标 (可调)
-        path.lineTo(500, 500);  // 终点坐标，向上滑动
+        path.moveTo(500, 1500);
+        path.lineTo(500, 500);
 
         GestureDescription.StrokeDescription stroke = new GestureDescription.StrokeDescription(path, 0, 500);
         GestureDescription gesture = new GestureDescription.Builder().addStroke(stroke).build();
         dispatchGesture(gesture, null, null);
     }
 
-    // 你可以添加一个 setter 方法用于修改 intervalMillis
-    public void updateInterval(long millis) {
-        this.intervalMillis = millis;
+    @Override
+    public void onAccessibilityEvent(AccessibilityEvent event) {}
+
+    @Override
+    public void onInterrupt() {
+        stopAutoScroll();
     }
 }
