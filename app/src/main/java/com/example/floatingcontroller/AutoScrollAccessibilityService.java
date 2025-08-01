@@ -6,6 +6,8 @@ import android.graphics.Path;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.accessibility.AccessibilityEvent;
+import android.content.Intent;
+
 
 public class AutoScrollAccessibilityService extends AccessibilityService {
 
