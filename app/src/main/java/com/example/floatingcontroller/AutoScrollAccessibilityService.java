@@ -1,4 +1,4 @@
-package com.example.ando_auto;
+package com.example.floatingcontroller;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.GestureDescription;
